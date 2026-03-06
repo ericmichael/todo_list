@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
+import type { ComponentProps } from 'react';
 import { render, fireEvent, screen, cleanup } from '@testing-library/react';
 import { FilterBar } from './FilterBar.tsx';
 
 const setup = () => {
-  const props = {
+  const props: ComponentProps<typeof FilterBar> = {
     search: '',
     onSearchChange: vi.fn(),
     status: 'all',
@@ -12,7 +13,13 @@ const setup = () => {
     onSortFieldChange: vi.fn(),
     sortDirection: 'asc',
     onSortDirectionChange: vi.fn(),
-  } as const;
+    tagCounts: [
+      { tag: 'work', count: 2 },
+      { tag: 'home', count: 1 },
+    ],
+    selectedTags: [],
+    onTagToggle: vi.fn(),
+  };
 
   render(<FilterBar {...props} />);
 
@@ -48,8 +55,17 @@ describe('FilterBar', () => {
 
   it('toggles the sort direction', () => {
     const props = setup();
-    const button = screen.getByRole('button');
+    const button = screen.getByTitle('Ascending');
     fireEvent.click(button);
     expect(props.onSortDirectionChange).toHaveBeenCalledWith('desc');
+  });
+
+  it('toggles tags with counts', () => {
+    const props = setup();
+    const tag = screen.getByRole('button', { name: /work/i });
+    const count = screen.getByText('2');
+    expect(count).not.toBeNull();
+    fireEvent.click(tag);
+    expect(props.onTagToggle).toHaveBeenCalledWith('work');
   });
 });

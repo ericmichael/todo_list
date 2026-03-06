@@ -47,6 +47,11 @@ export function useTodos() {
     setTodos((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
+  const deleteTodos = useCallback((ids: string[]) => {
+    if (ids.length === 0) return;
+    setTodos((prev) => prev.filter((t) => !ids.includes(t.id)));
+  }, []);
+
   const toggleTodo = useCallback((id: string) => {
     setTodos((prev) =>
       prev.map((t) =>
@@ -57,5 +62,16 @@ export function useTodos() {
     );
   }, []);
 
-  return { todos, addTodo, updateTodo, deleteTodo, toggleTodo };
+  const updateTodos = useCallback(
+    (ids: string[], updates: Partial<Omit<Todo, 'id' | 'createdAt'>>) => {
+      if (ids.length === 0) return;
+      const now = new Date().toISOString();
+      setTodos((prev) =>
+        prev.map((t) => (ids.includes(t.id) ? { ...t, ...updates, updatedAt: now } : t)),
+      );
+    },
+    [],
+  );
+
+  return { todos, addTodo, updateTodo, updateTodos, deleteTodo, deleteTodos, toggleTodo };
 }
