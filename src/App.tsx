@@ -9,7 +9,7 @@ import { useSettings } from './hooks/useSettings.ts';
 import './App.css';
 
 export function App() {
-  const { todos, addTodo, updateTodo, deleteTodo, toggleTodo } = useTodos();
+  const { todos, addTodo, updateTodo, updateTodos, deleteTodo, deleteTodos, toggleTodo } = useTodos();
   const { settings, updateSettings } = useSettings();
 
   return (
@@ -23,6 +23,8 @@ export function App() {
                 todos={todos}
                 onToggle={toggleTodo}
                 onDelete={deleteTodo}
+                onBulkDelete={deleteTodos}
+                onBulkUpdate={updateTodos}
                 confirmDelete={settings.confirmDelete}
               />
             }

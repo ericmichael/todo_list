@@ -6,6 +6,8 @@ interface TodoItemProps {
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   confirmDelete: boolean;
+  selected: boolean;
+  onSelectToggle: (id: string, isSelected: boolean) => void;
 }
 
 const priorityLabels: Record<string, string> = {
@@ -14,7 +16,14 @@ const priorityLabels: Record<string, string> = {
   high: 'High',
 };
 
-export function TodoItem({ todo, onToggle, onDelete, confirmDelete }: TodoItemProps) {
+export function TodoItem({
+  todo,
+  onToggle,
+  onDelete,
+  confirmDelete,
+  selected,
+  onSelectToggle,
+}: TodoItemProps) {
   const handleDelete = () => {
     if (confirmDelete && !window.confirm(`Delete "${todo.title}"?`)) return;
     onDelete(todo.id);
@@ -25,6 +34,13 @@ export function TodoItem({ todo, onToggle, onDelete, confirmDelete }: TodoItemPr
 
   return (
     <div className={`todo-item ${todo.completed ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}`}>
+      <input
+        type="checkbox"
+        className="todo-select"
+        checked={selected}
+        onChange={(event) => onSelectToggle(todo.id, event.target.checked)}
+        aria-label={`Select ${todo.title}`}
+      />
       <label className="todo-checkbox">
         <input
           type="checkbox"

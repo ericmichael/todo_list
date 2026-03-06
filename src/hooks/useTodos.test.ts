@@ -97,4 +97,59 @@ describe('useTodos', () => {
     expect(result.current.todos[0].title).toBe('Updated');
     expect(result.current.todos[0].priority).toBe('high');
   });
+
+  it('updates multiple todos', () => {
+    const { result } = renderHook(() => useTodos());
+    act(() => {
+      result.current.addTodo({
+        title: 'First',
+        description: '',
+        completed: false,
+        priority: 'low',
+        dueDate: null,
+        tags: [],
+      });
+      result.current.addTodo({
+        title: 'Second',
+        description: '',
+        completed: false,
+        priority: 'low',
+        dueDate: null,
+        tags: [],
+      });
+    });
+    const ids = result.current.todos.map((todo) => todo.id);
+    act(() => {
+      result.current.updateTodos(ids, { completed: true, priority: 'high' });
+    });
+    expect(result.current.todos.every((todo) => todo.completed)).toBe(true);
+    expect(result.current.todos.every((todo) => todo.priority === 'high')).toBe(true);
+  });
+
+  it('deletes multiple todos', () => {
+    const { result } = renderHook(() => useTodos());
+    act(() => {
+      result.current.addTodo({
+        title: 'Delete one',
+        description: '',
+        completed: false,
+        priority: 'low',
+        dueDate: null,
+        tags: [],
+      });
+      result.current.addTodo({
+        title: 'Delete two',
+        description: '',
+        completed: false,
+        priority: 'low',
+        dueDate: null,
+        tags: [],
+      });
+    });
+    const ids = result.current.todos.map((todo) => todo.id);
+    act(() => {
+      result.current.deleteTodos(ids);
+    });
+    expect(result.current.todos).toHaveLength(0);
+  });
 });
