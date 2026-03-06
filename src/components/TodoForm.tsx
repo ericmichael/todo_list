@@ -28,8 +28,12 @@ export function TodoForm({ initial, defaultPriority, onSubmit, onCancel }: TodoF
     const errs: Record<string, string> = {};
     if (!title.trim()) errs.title = 'Title is required';
     if (title.length > 200) errs.title = 'Title must be under 200 characters';
-    if (dueDate && new Date(dueDate) < new Date(new Date().toDateString())) {
-      errs.dueDate = 'Due date cannot be in the past';
+    if (dueDate) {
+      const [year, month, day] = dueDate.split('-').map(Number);
+      const due = new Date(year, month - 1, day);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      if (due < today) errs.dueDate = 'Due date cannot be in the past';
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
