@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { FilterBar } from '../components/FilterBar.tsx';
 import { TodoItem } from '../components/TodoItem.tsx';
+import { useToast } from '../hooks/useToast.tsx';
 import type { Todo, FilterStatus, SortField, SortDirection, Priority } from '../types.ts';
 
 interface TodoListPageProps {
@@ -29,6 +30,7 @@ export function TodoListPage({
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkPriority, setBulkPriority] = useState('');
+  const { addToast } = useToast();
 
   useEffect(() => {
     setSelectedIds((prev) => prev.filter((id) => todos.some((todo) => todo.id === id)));
@@ -113,6 +115,13 @@ export function TodoListPage({
     if (confirmDelete && !window.confirm(`Delete ${selectedIds.length} todos?`)) return;
     onBulkDelete(selectedIds);
     setSelectedIds([]);
+    const count = selectedIds.length;
+    addToast(`${count} todo${count === 1 ? '' : 's'} deleted`, { variant: 'success' });
+  };
+
+  const handleDelete = (id: string) => {
+    onDelete(id);
+    addToast('Todo deleted', { variant: 'success' });
   };
 
   const handleBulkComplete = (completed: boolean) => {
@@ -158,7 +167,7 @@ export function TodoListPage({
               key={todo.id}
               todo={todo}
               onToggle={onToggle}
-              onDelete={onDelete}
+              onDelete={handleDelete}
               confirmDelete={confirmDelete}
               selected={selectedIds.includes(todo.id)}
               onSelectToggle={handleSelectToggle}
