@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { TodoListPage } from './TodoListPage.tsx';
+import { ToastProvider } from '../hooks/useToast.tsx';
 import type { Todo } from '../types.ts';
 
 const baseTodos: Todo[] = [
@@ -41,9 +42,11 @@ const setup = (overrides?: Partial<Parameters<typeof TodoListPage>[0]>) => {
   };
 
   render(
-    <MemoryRouter>
-      <TodoListPage {...props} />
-    </MemoryRouter>,
+    <ToastProvider>
+      <MemoryRouter>
+        <TodoListPage {...props} />
+      </MemoryRouter>
+    </ToastProvider>,
   );
 
   return props;

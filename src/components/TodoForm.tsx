@@ -13,9 +13,16 @@ interface TodoFormProps {
     completed: boolean;
   }) => void;
   onCancel: () => void;
+  onValidationError?: (message: string, errors: Record<string, string>) => void;
 }
 
-export function TodoForm({ initial, defaultPriority, onSubmit, onCancel }: TodoFormProps) {
+export function TodoForm({
+  initial,
+  defaultPriority,
+  onSubmit,
+  onCancel,
+  onValidationError,
+}: TodoFormProps) {
   const [title, setTitle] = useState(initial?.title ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');
   const [priority, setPriority] = useState<Priority>(initial?.priority ?? defaultPriority);
@@ -36,6 +43,12 @@ export function TodoForm({ initial, defaultPriority, onSubmit, onCancel }: TodoF
       if (due < today) errs.dueDate = 'Due date cannot be in the past';
     }
     setErrors(errs);
+    if (Object.keys(errs).length > 0) {
+      const [message] = Object.values(errs);
+      if (message) {
+        onValidationError?.(message, errs);
+      }
+    }
     return Object.keys(errs).length === 0;
   };
 

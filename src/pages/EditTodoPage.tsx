@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { TodoForm } from '../components/TodoForm.tsx';
+import { useToast } from '../hooks/useToast.tsx';
 import type { Priority, Todo } from '../types.ts';
 
 interface EditTodoPageProps {
@@ -11,6 +12,7 @@ interface EditTodoPageProps {
 export function EditTodoPage({ todos, defaultPriority, onUpdate }: EditTodoPageProps) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const todo = todos.find((t) => t.id === id);
 
   if (!todo) {
@@ -32,9 +34,11 @@ export function EditTodoPage({ todos, defaultPriority, onUpdate }: EditTodoPageP
         defaultPriority={defaultPriority}
         onSubmit={(data) => {
           onUpdate(todo.id, data);
+          addToast('Todo updated', { variant: 'success' });
           navigate('/');
         }}
         onCancel={() => navigate('/')}
+        onValidationError={(message) => addToast(message, { variant: 'error' })}
       />
     </div>
   );

@@ -14,6 +14,7 @@ const setup = () => {
     defaultPriority: 'medium',
     onSubmit: vi.fn(),
     onCancel: vi.fn(),
+    onValidationError: vi.fn(),
   } as const;
 
   render(<TodoForm {...props} />);
@@ -31,6 +32,10 @@ describe('TodoForm validation', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Add Todo' }));
     expect(screen.getByText('Title is required')).toBeTruthy();
     expect(props.onSubmit).not.toHaveBeenCalled();
+    expect(props.onValidationError).toHaveBeenCalledWith(
+      'Title is required',
+      expect.objectContaining({ title: 'Title is required' }),
+    );
   });
 
   it('enforces the 200 character limit', () => {
@@ -40,6 +45,10 @@ describe('TodoForm validation', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Add Todo' }));
     expect(screen.getByText('Title must be under 200 characters')).toBeTruthy();
     expect(props.onSubmit).not.toHaveBeenCalled();
+    expect(props.onValidationError).toHaveBeenCalledWith(
+      'Title must be under 200 characters',
+      expect.objectContaining({ title: 'Title must be under 200 characters' }),
+    );
   });
 
   it('rejects past due dates', () => {
@@ -54,6 +63,10 @@ describe('TodoForm validation', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Add Todo' }));
     expect(screen.getByText('Due date cannot be in the past')).toBeTruthy();
     expect(props.onSubmit).not.toHaveBeenCalled();
+    expect(props.onValidationError).toHaveBeenCalledWith(
+      'Due date cannot be in the past',
+      expect.objectContaining({ dueDate: 'Due date cannot be in the past' }),
+    );
   });
 
   it('accepts today as a valid due date', () => {
@@ -74,5 +87,6 @@ describe('TodoForm validation', () => {
       tags: [],
       completed: false,
     });
+    expect(props.onValidationError).not.toHaveBeenCalled();
   });
 });
