@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { FilterBar } from '../components/FilterBar.tsx';
 import { TodoItem } from '../components/TodoItem.tsx';
+import { useToast } from '../hooks/useToast.tsx';
 import type { Todo, FilterStatus, SortField, SortDirection } from '../types.ts';
 
 interface TodoListPageProps {
@@ -17,6 +18,12 @@ export function TodoListPage({ todos, onToggle, onDelete, confirmDelete }: TodoL
   const [status, setStatus] = useState<FilterStatus>('all');
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const { showToast } = useToast();
+
+  const handleDelete = (id: string) => {
+    onDelete(id);
+    showToast('Todo deleted successfully.', 'success');
+  };
 
   const filtered = useMemo(() => {
     let result = todos;
@@ -91,7 +98,7 @@ export function TodoListPage({ todos, onToggle, onDelete, confirmDelete }: TodoL
               key={todo.id}
               todo={todo}
               onToggle={onToggle}
-              onDelete={onDelete}
+              onDelete={handleDelete}
               confirmDelete={confirmDelete}
             />
           ))}

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { TodoForm } from '../components/TodoForm.tsx';
+import { useToast } from '../hooks/useToast.tsx';
 import type { Priority, Todo } from '../types.ts';
 
 interface NewTodoPageProps {
@@ -9,6 +10,7 @@ interface NewTodoPageProps {
 
 export function NewTodoPage({ defaultPriority, onAdd }: NewTodoPageProps) {
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   return (
     <div className="new-todo-page">
@@ -17,6 +19,7 @@ export function NewTodoPage({ defaultPriority, onAdd }: NewTodoPageProps) {
         defaultPriority={defaultPriority}
         onSubmit={(data) => {
           onAdd(data);
+          showToast('Todo created successfully.', 'success');
           navigate('/');
         }}
         onCancel={() => navigate('/')}

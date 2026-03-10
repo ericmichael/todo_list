@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useToast } from '../hooks/useToast.tsx';
 import type { Priority, Todo } from '../types.ts';
 
 interface TodoFormProps {
@@ -23,6 +24,7 @@ export function TodoForm({ initial, defaultPriority, onSubmit, onCancel }: TodoF
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState<string[]>(initial?.tags ?? []);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { showToast } = useToast();
 
   const validate = () => {
     const errs: Record<string, string> = {};
@@ -32,6 +34,9 @@ export function TodoForm({ initial, defaultPriority, onSubmit, onCancel }: TodoF
       errs.dueDate = 'Due date cannot be in the past';
     }
     setErrors(errs);
+    if (Object.keys(errs).length > 0) {
+      showToast(Object.values(errs)[0], 'error');
+    }
     return Object.keys(errs).length === 0;
   };
 
